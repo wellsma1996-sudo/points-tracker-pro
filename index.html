@@ -41,10 +41,7 @@ button{
     padding:12px;
     margin-top:10px;
     font-size:16px;
-}
-
-strong{
-    color:#333;
+    cursor:pointer;
 }
 
 ul{
@@ -74,7 +71,7 @@ ul{
     <strong id="remaining">26</strong>
 </p>
 
-<p>Weekly Flex:
+<p>Weekly Flex Remaining:
     <strong id="flex">42</strong>
 </p>
 ```
@@ -168,6 +165,26 @@ ul{
 <h2>Weight History</h2>
 
 <ul id="weightHistory"></ul>
+```
+
+</div>
+
+<div class="card">
+
+```
+<h2>App Controls</h2>
+
+<button onclick="refreshDashboard()">
+    Refresh Dashboard
+</button>
+
+<button onclick="resetFoodToday()">
+    Reset Food Today
+</button>
+
+<button onclick="clearAllProgress()">
+    Clear All Progress
+</button>
 ```
 
 </div>
