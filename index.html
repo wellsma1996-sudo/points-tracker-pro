@@ -3,106 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Points Tracker Pro</title>
+<title>Points Tracker</title>
 <link rel="manifest" href="manifest.json">
 <style>
-body{font-family:Arial;margin:0;padding:15px;max-width:800px}
-.card{border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
-#reader{width:100%}
-button{padding:10px 14px}
-.big{font-size:1.2em;font-weight:bold}
+body {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+input, button {
+  padding: 10px;
+  margin: 5px 0;
+}
 </style>
-<script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
-<h1>Points Tracker Pro</h1>
+
+<h1>Points Tracker</h1>
 
 <div class="card">
-<div class="big">Daily Budget: 26</div>
-<div>Used: <span id="used">0</span></div>
-<div>Remaining: <span id="remain">26</span></div>
+  <h2>Today's Points</h2>
+  <p>Budget: <strong>26</strong></p>
+  <p>Used: <span id="used">0</span></p>
+  <p>Remaining: <span id="remaining">26</span></p>
 </div>
 
 <div class="card">
-<h3>Scan Barcode</h3>
-<div id="reader"></div>
-<button onclick="startScanner()">Start Camera Scanner</button>
+  <h2>Add Food</h2>
+  <input type="text" id="foodName" placeholder="Food Name"><br>
+  <input type="number" id="foodPoints" placeholder="Points"><br>
+  <button onclick="addFood()">Add Food</button>
 </div>
 
 <div class="card">
-<h3>Last Food</h3>
-<div id="food">No food scanned.</div>
-<button onclick="addFood()">Add Food To Day</button>
+  <h2>Weight Log</h2>
+  <input type="number" id="weight" placeholder="Current Weight"><br>
+  <button onclick="saveWeight()">Save Weight</button>
 </div>
 
 <div class="card">
-<h3>History</h3>
-<ul id="history"></ul>
+  <h2>Food History</h2>
+  <ul id="foodHistory"></ul>
 </div>
 
-<script>
-let currentPoints=0,currentName="";
+<div class="card">
+  <h2>Weight History</h2>
+  <ul id="weightHistory"></ul>
+</div>
 
-function calcPoints(cal){
- if(cal<100) return 2;
- if(cal<150) return 3;
- if(cal<200) return 4;
- if(cal<250) return 5;
- if(cal<300) return 6;
- return Math.ceil(cal/50);
-}
+<script src="app.js"></script>
 
-function refresh(){
- let used=Number(localStorage.getItem("used")||0);
- document.getElementById("used").textContent=used;
- document.getElementById("remain").textContent=26-used;
- let h=JSON.parse(localStorage.getItem("history")||"[]");
- document.getElementById("history").innerHTML=h.map(x=>"<li>"+x+"</li>").join("");
-}
-
-async function lookup(barcode){
- try{
-   let r=await fetch("https://world.openfoodfacts.org/api/v0/product/"+barcode+".json");
-   let j=await r.json();
-   if(j.product){
-      let name=j.product.product_name||"Unknown Food";
-      let cal=Math.round((j.product.nutriments["energy-kcal_100g"]||0));
-      currentPoints=calcPoints(cal);
-      currentName=name;
-      document.getElementById("food").innerHTML=
-      "<b>"+name+"</b><br>Calories/100g: "+cal+"<br>Points: "+currentPoints;
-   }
- }catch(e){
-   document.getElementById("food").textContent="Lookup failed.";
- }
-}
-
-function addFood(){
- let used=Number(localStorage.getItem("used")||0);
- used+=currentPoints;
- localStorage.setItem("used",used);
- let h=JSON.parse(localStorage.getItem("history")||"[]");
- h.unshift(currentName+" ("+currentPoints+" pts)");
- localStorage.setItem("history",JSON.stringify(h.slice(0,50)));
- refresh();
-}
-
-function startScanner(){
- const qr=new Html5Qrcode("reader");
- qr.start(
-  {facingMode:"environment"},
-  {fps:10, qrbox:250},
-  (decoded)=>{
-    lookup(decoded);
-    qr.stop();
-  }
- );
-}
-
-if('serviceWorker' in navigator){
- navigator.serviceWorker.register('sw.js');
-}
-refresh();
-</script>
 </body>
 </html>
