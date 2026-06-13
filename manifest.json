@@ -1,8 +1,8 @@
 {
-"name":"Points Tracker Pro",
-"short_name":"PointsPro",
-"display":"standalone",
-"start_url":"./",
-"background_color":"#ffffff",
-"theme_color":"#ffffff"
+  "name": "Points Tracker",
+  "short_name": "Points",
+  "display": "standalone",
+  "start_url": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
 }
